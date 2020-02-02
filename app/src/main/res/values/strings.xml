@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Biometric Authentication</string>
+    <string name="authenticate_me">Authenticate Me</string>
+    <string name="biometric_promptinfo_title">Enter Biometric Info</string>
+    <string name="biometric_promptinfo_subtitle">Authentication required</string>
+    <string name="biometric_promptinfo_description">Biometric authentication is required beyond this point.</string>
+    <string name="biometric_promptinfo_negativebutton">Cancel</string>
+    <string name="biometric_authentication_success">Authentication Successful!</string>
+    <string name="biometric_authentication_fail">Authentication failed.</string>
+    <string name="biometric_authentication_error">Authentication error</string>
+    <string name="biometric_manager_nohardware">Biometrics not supported on this device!</string>
+    <string name="biometric_manager_unavailable">Biometrics currently unavailable.</string>
+    <string name="biometric_manager_notenrolled">Please create biometric credentials first.</string>
+</resources>
