@@ -7,8 +7,23 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
+/**
+ *  Biometric Authentication
+ *  File: MainActivity.kt
+ *
+ *  @author Hector Delgado
+ *
+ *  Created on February 01, 2020.
+ *  Copyright © 2020 Hector Delgado. All rights reserved.
+ *
+ *  An activity that displays a destructive message when
+ *  a user successfully authenticates via their devices biometrics.
+ */
 class MainActivity : AppCompatActivity() {
+
+    private val cipher = CaesarCipher(3)
 
     private lateinit var biometricPrompt: BiometricPrompt
 
@@ -17,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         biometricPrompt = createBiometricPrompt()
+        messageTextView.text = cipher.encryptMessage(getString(R.string.secret_message))
     }
 
     override fun onStart() {
@@ -69,17 +85,57 @@ class MainActivity : AppCompatActivity() {
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errorCode, errString)
 
-                notifyUser(getString(R.string.biometric_authentication_error) + ": $errString")
+                // Display the error that caused authentication to fail.
+                when (errorCode) {
+                    BiometricPrompt.ERROR_NEGATIVE_BUTTON -> {
+                        notifyUser(getString(R.string.authentication_cancelled))
+                    }
+                    BiometricPrompt.ERROR_CANCELED -> {
+                        notifyUser(getString(R.string.authentication_failed))
+                    }
+                    else -> {
+                        notifyUser(getString(R.string.biometric_authentication_error) + ": $errString")
+                    }
+                }
             }
 
             override fun onAuthenticationFailed() {
                 super.onAuthenticationFailed()
                 notifyUser(getString(R.string.biometric_authentication_fail))
+
+                biometricPrompt.cancelAuthentication()
             }
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
+
                 notifyUser(getString(R.string.biometric_authentication_success))
+                authenticateBtn.isEnabled = false
+
+                val messagePrefix = cipher.decryptMessage(messageTextView.text.toString()) +
+                        "\n\n" + getString(R.string.self_destruct_message)
+                var counter = 3
+
+                // Show the secret message for 3 seconds then reset to
+                // the encrypted message
+                val mainTimer = Timer()
+                mainTimer.scheduleAtFixedRate(object : TimerTask() {
+                    override fun run() {
+                        if (counter < 0) {
+                            runOnUiThread {
+                                authenticateBtn.isEnabled = true
+                                messageTextView.text = cipher.encryptMessage(getString(R.string.secret_message))
+                            }
+                            mainTimer.cancel()
+                        } else {
+                            val message = "$messagePrefix $counter"
+                            runOnUiThread {
+                                messageTextView.text = message
+                            }
+                            counter--
+                        }
+                    }
+                }, 0, 1000)
             }
         }
 
@@ -103,8 +159,6 @@ class MainActivity : AppCompatActivity() {
      * Convenience method that displays a simple Snackbar message.
      */
     private fun notifyUser(message: String) {
-        runOnUiThread {
-            Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG).show()
-        }
+        Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG).show()
     }
 }

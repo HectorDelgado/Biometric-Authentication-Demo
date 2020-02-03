@@ -11,4 +11,10 @@
     <string name="biometric_manager_nohardware">Biometrics not supported on this device!</string>
     <string name="biometric_manager_unavailable">Biometrics currently unavailable.</string>
     <string name="biometric_manager_notenrolled">Please create biometric credentials first.</string>
+
+    <string name="secret_message">Programming is really entertaining when you get creative!</string>
+    <string name="self_destruct_message">THIS MESSAGE WILL SELF DESTRUCT IN:</string>
+    <string name="use_biometrics_to_decrypt_the_secret_message">Use Biometrics To Decrypt The Secret Message</string>
+    <string name="authentication_cancelled">Authentication cancelled.</string>
+    <string name="authentication_failed">Authentication failed.</string>
 </resources>
